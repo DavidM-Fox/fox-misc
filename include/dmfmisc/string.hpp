@@ -9,7 +9,7 @@ namespace dmfmisc {
 
 class string {
 public:
-    /// @brief Splits an std::string by a delimiter
+    /// @brief Split an std::string by a delimiter
     static std::vector<std::string> split(const std::string &str,
                                           const char &delimiter)
     {
@@ -26,7 +26,7 @@ public:
         return vec;
     }
 
-    /// @brief joins a vector<T> by a delimiter string
+    /// @brief Join an std::vector<T> by a delimiter string
     template <typename T>
     static std::string join(const std::vector<T> &vec,
                             const char *const delimiter)
@@ -46,7 +46,7 @@ public:
         return os.str();
     }
 
-    /// @brief Removes all whitespace from a std::string
+    /// @brief Remove all whitespace from an std::string
     static void clean(std::string &str)
     {
         str.erase(std::remove_if(str.begin(), str.end(), std::isspace),
