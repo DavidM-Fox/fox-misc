@@ -9,6 +9,7 @@ set(SOURCES
     main.cpp
     include/dmfmisc.hpp
     include/dmfmisc/string.hpp
+    include/dmfmisc/logger.hpp
 )
 
 add_executable(misc ${SOURCES})
