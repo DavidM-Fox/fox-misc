@@ -24,6 +24,7 @@ public:
         }
     }
 
+    /// @brief Open an ofstream using file_path.
     void open_ofstream(const std::string &file_path)
     {
         if (ofs.is_open())
@@ -31,6 +32,7 @@ public:
         ofs.open(file_path, std::ios_base::app);
     }
 
+    /// @brief Append a Log statement to the ofstream file_path.
     void write(const std::string &str,
                const Logger::level &level = Logger::level::NORMAL)
     {
@@ -45,6 +47,7 @@ public:
         }
     }
 
+    /// @brief Print a Log statement to console.
     void print(const std::string &str,
                const Logger::level &level = Logger::level::NORMAL)
     {
@@ -52,6 +55,7 @@ public:
     }
 
 private:
+    /// @brief Static string return for header-only library.
     static std::string
     prepend_str(const Logger::level &level = Logger::level::NORMAL)
     {
