@@ -6,7 +6,6 @@
 namespace fox {
 namespace misc {
 
-/// @brief Split an std::string by a delimiter
 std::vector<std::string> string::split(const std::string &str,
                                        const char &delimiter)
 {
@@ -23,7 +22,6 @@ std::vector<std::string> string::split(const std::string &str,
     return vec;
 }
 
-/// @brief Remove all whitespace from an std::string
 void string::clean(std::string &str)
 {
     str.erase(std::remove_if(str.begin(), str.end(), std::isspace), str.end());
