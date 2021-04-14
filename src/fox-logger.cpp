@@ -1,5 +1,4 @@
 #include <fstream>
-#include <exception>
 #include <iostream>
 #include <string>
 #include <chrono>
@@ -10,55 +9,66 @@
 namespace fox {
 namespace misc {
 
-Logger::Logger() : file_path("") {}
-Logger::Logger(const std::string &file_path) : file_path(file_path)
+Logger::Logger() {}
+Logger::Logger(const std::string &file_path)
 {
     ofs.open(file_path.c_str(), std::ios_base::app);
-    if (!ofs.is_open()) {
-        std::cerr << "'dmfmisc/logger.hpp'.hpp: Warning: "
-                     "dmfmisc::logger(): Cannot open file_path '" +
-                         file_path + "'\n";
-    }
+    if (!ofs.is_open())
+        openFileCerr(file_path);
 }
 
-/// @brief Open an ofstream using file_path.
-void Logger::open_ofstream(const std::string &file_path)
+void Logger::openFile(const std::string &file_path)
 {
     if (ofs.is_open())
         ofs.close();
     ofs.open(file_path, std::ios_base::app);
 }
 
-/// @brief Append a Log statement to the ofstream file_path.
 void Logger::write(const std::string &str, const Logger::level &level)
 {
-    if (!ofs.is_open()) {
-        std::cerr << "'dmfmisc/logger.hpp'.hpp: Warning: "
-                     "dmfmisc::logger::write(): Cannot log statement to file. "
-                     "ofstream is not open.\n";
-    }
-    else {
-        ofs << prepend_str() + str + '\n';
-    }
+    if (!ofs.is_open())
+        writeCerr();
+    else
+        ofs << levelStr(level) + getTime() + str + '\n';
 }
 
-/// @brief Print a Log statement to console.
 void Logger::print(const std::string &str, const Logger::level &level)
 {
-    std::cout << prepend_str() + str + '\n';
+    std::cout << levelStr(level) + getTime() + str + '\n';
 }
 
-/// @brief Static string return for header-only library.
-std::string Logger::prepend_str(const Logger::level &level)
+std::string Logger::getTime()
 {
-    static const std::string a[3] = {" >> ", " >> WARNING: ", " >> ERROR: "};
 
     std::time_t time =
         std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
     auto time_info = std::localtime(&time);
     std::ostringstream oss;
     oss << std::put_time(time_info, "%Y-%m-%d | %H:%M:%S");
-    return oss.str() + a[static_cast<int>(level)];
+    return oss.str();
+}
+
+const std::string Logger::levelStr(const Logger::level &level)
+{
+    static const std::string a[] = {" >> ", " >> WARNING: ", " >> ERROR: "};
+    return a[static_cast<int>(level)];
+}
+
+void writeCerr()
+{
+    static const std::string error =
+        "'dmfmisc/logger.hpp'.hpp: Warning: "
+        "dmfmisc::logger::write(): Cannot log statement to file. "
+        "ofstream is not open.\n";
+    std::cerr << error;
+}
+
+void openFileCerr(const std::string &file_path)
+{
+    static const std::string error =
+        "'fox-misc/fox-logger.hpp'.hpp: Warning: "
+        "fox-misc::logger(): Cannot open file_path '";
+    std::cerr << error + file_path + "'\n";
 }
 
 } // namespace misc
