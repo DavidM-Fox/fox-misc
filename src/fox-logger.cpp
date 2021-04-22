@@ -9,12 +9,13 @@
 namespace fox {
 namespace misc {
 
-Logger::Logger() {}
+Logger::Logger() : time_format("%Y-%m-%d | %H:%M:%S") {}
 Logger::Logger(const std::string &file_path)
+    : time_format("%Y-%m-%d | %H:%M:%S")
 {
     ofs.open(file_path.c_str(), std::ios_base::app);
     if (!ofs.is_open())
-        openFileCerr(file_path);
+        std::cerr << open_err << file_path << '\n';
 }
 
 void Logger::openFile(const std::string &file_path)
@@ -22,29 +23,34 @@ void Logger::openFile(const std::string &file_path)
     if (ofs.is_open())
         ofs.close();
     ofs.open(file_path, std::ios_base::app);
+    if (!ofs.is_open())
+        std::cerr << open_err << file_path << '\n';
 }
 
 void Logger::write(const std::string &str, const Logger::level &level)
 {
     if (!ofs.is_open())
-        writeCerr();
+        std::cerr << write_err;
     else
-        ofs << levelStr(level) + getTime() + str + '\n';
+        ofs << getTime() + levelStr(level) + str + '\n';
 }
 
 void Logger::print(const std::string &str, const Logger::level &level)
 {
-    std::cout << levelStr(level) + getTime() + str + '\n';
+    std::cout << getTime() + levelStr(level) + str + '\n';
 }
+
+void Logger::setTimeFormat(const std::string &str) { time_format = str; }
 
 std::string Logger::getTime()
 {
-
+    if (time_format == "")
+        return "";
     std::time_t time =
         std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
     auto time_info = std::localtime(&time);
     std::ostringstream oss;
-    oss << std::put_time(time_info, "%Y-%m-%d | %H:%M:%S");
+    oss << std::put_time(time_info, time_format.c_str());
     return oss.str();
 }
 
@@ -54,22 +60,14 @@ const std::string Logger::levelStr(const Logger::level &level)
     return a[static_cast<int>(level)];
 }
 
-void writeCerr()
-{
-    static const std::string error =
-        "'dmfmisc/logger.hpp'.hpp: Warning: "
-        "dmfmisc::logger::write(): Cannot log statement to file. "
-        "ofstream is not open.\n";
-    std::cerr << error;
-}
+const std::string Logger::write_err =
+    "'fox-misc/fox-logger.hpp': Warning: "
+    "fox::misc::logger::write(): Cannot log statement to file. "
+    "ofstream is not open.\n";
 
-void openFileCerr(const std::string &file_path)
-{
-    static const std::string error =
-        "'fox-misc/fox-logger.hpp'.hpp: Warning: "
-        "fox-misc::logger(): Cannot open file_path '";
-    std::cerr << error + file_path + "'\n";
-}
+const std::string Logger::open_err =
+    "'fox-misc/fox-logger.hpp': Warning: "
+    "fox-misc::logger(): Cannot open file_path '";
 
 } // namespace misc
 } // namespace fox

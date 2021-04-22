@@ -12,24 +12,30 @@ public:
     Logger();
     Logger(const std::string &file_path);
 
-    /// @brief Open an ofstream using file_path.
+    /// @brief Open an std::ofstream using file_path.
     void openFile(const std::string &file_path);
 
-    /// @brief Append a Log statement to the ofstream file_path.
+    /// @brief Append a log statement to the opened std::ofstream.
     void write(const std::string &str,
                const Logger::level &level = Logger::level::NORMAL);
 
-    /// @brief Print a Log statement to console.
-    static void print(const std::string &str,
-                      const Logger::level &level = Logger::level::NORMAL);
+    /// @brief Print a log statement to console.
+    void print(const std::string &str,
+               const Logger::level &level = Logger::level::NORMAL);
+
+    /// @brief Set the log statement time prefix format string e.g. "%Y-%m-%d |
+    /// %H:%M:%S". Set to "" if no time prefix is desired.
+    void setTimeFormat(const std::string &str = "%Y-%m-%d | %H:%M:%S");
 
 private:
     std::ofstream ofs;
 
-    static std::string getTime();
+    std::string time_format;
+    std::string getTime();
+
     static const std::string Logger::levelStr(const Logger::level &level);
-    static void writeCerr();
-    static void openFileCerr(const std::string &file_path);
+    static const std::string write_err;
+    static const std::string open_err;
 };
 
 } // namespace misc
